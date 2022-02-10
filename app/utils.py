@@ -10,8 +10,6 @@ import requests
 from io import BytesIO
 from PIL import Image
 from loguru import logger
-from google.cloud import vision
-from google.cloud.vision import types
 
 import app.settings as ste
 

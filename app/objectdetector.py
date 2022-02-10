@@ -6,7 +6,7 @@ from app.utils import get_classnames_dict, stringToRGB, cv_to_base64
 from PIL import Image
 
 DETECTION_THRESHOLD = 0.3
-model_path = "models/evoa-face-obejct-detector/evoa-face-object-dector.tflite"
+model_path = "models/evoa-face-object-detector/evoa-face-object-detector.tflite"
 classes = get_classnames_dict()
 
 # Load the labels into a list
