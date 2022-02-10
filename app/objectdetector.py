@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import tensorflow as tf
-
+from app.main import logger
 from app.utils import get_classnames_dict, stringToRGB, cv_to_base64
 from PIL import Image
 
@@ -26,20 +26,43 @@ def preprocess_image(image, input_size):
     resized_img = resized_img[tf.newaxis, :]
     resized_img = tf.cast(resized_img, dtype=tf.uint8)
     return resized_img, original_image
-    
+
+
+def get_output_tensor(interpreter, index):
+    """Returns the output tensor at the given index."""
+    # print(interpreter.get_output_details())
+    output_details = interpreter.get_output_details()[index]
+    # print(output_details)
+    tensor = np.squeeze(interpreter.get_tensor(output_details['index']))
+    return tensor
+
+
 def detect_objects(interpreter, image, threshold):
   """Returns a list of detection results, each a dictionary of object info."""
 
-  signature_fn = interpreter.get_signature_runner()
+  # signature_fn = interpreter.get_signature_runner()
+  # logger.debug("detect_objects - signature_fn: %s" % signature_fn)
+  # # Feed the input image to the model
+  # output = signature_fn(images=image)
+  logger.debug(interpreter.get_signature_list())
+  # Get input and output tensors.
+  input_details = interpreter.get_input_details()
+  output_details = interpreter.get_output_details()
 
-  # Feed the input image to the model
-  output = signature_fn(images=image)
-
+  input_shape = input_details[0]['shape']
+  input_tensor = np.array(np.expand_dims(image, 0), dtype=np.uint8)
+  input_index = interpreter.get_input_details()[0]['index']
+  interpreter.set_tensor(input_index, input_tensor)
+  interpreter.invoke()
+  
+  logger.debug("Get output")
+  output_details = interpreter.get_input_details()
+  logger.debug(output_details)
   # Get all outputs from the model
-  count = int(np.squeeze(output['output_0']))
-  scores = np.squeeze(output['output_1'])
-  classes = np.squeeze(output['output_2'])
-  boxes = np.squeeze(output['output_3'])
+  scores = get_output_tensor(interpreter, 0)
+  boxes = get_output_tensor(interpreter, 1)
+  count = int(get_output_tensor(interpreter, 2))
+  classes = get_output_tensor(interpreter, 3)
 
   results = []
   for i in range(count):
@@ -50,13 +73,15 @@ def detect_objects(interpreter, image, threshold):
         'score': scores[i]
       }
       results.append(result)
+  logger.debug("results: %s" % results)
   return results
 
 def run_odt_and_draw_results(image, interpreter, threshold=0.5):
   """Run object detection on the input image and draw the detection results"""
   # Load the input shape required by the model
   _, input_height, input_width, _ = interpreter.get_input_details()[0]['shape']
-
+  logger.debug("height: %s, width: %s" % input_height, input_width)
+  logger.debug(interpreter.get_signature_list())
   # Load the input image and preprocess it
   preprocessed_image, original_image = preprocess_image(
       image,
@@ -65,7 +90,7 @@ def run_odt_and_draw_results(image, interpreter, threshold=0.5):
 
   # Run object detection on the input image
   results = detect_objects(interpreter, preprocessed_image, threshold=threshold)
-
+  logger.debug(results)
   # Plot the detection results on the input image
   original_image_np = original_image.numpy().astype(np.uint8)
   for obj in results:
@@ -100,9 +125,11 @@ def load_interpreter():
     """ Load the TFLite model """
     interpreter = tf.lite.Interpreter(model_path=model_path)
     interpreter.allocate_tensors()
+    logger.debug("Loaded model: %s" % interpreter.get_input_details())
     return interpreter
 
 def predict(image, interpreter):
+    logger.debug(interpreter.get_signature_list())
     detection_result_image = run_odt_and_draw_results(
     image,
     interpreter,

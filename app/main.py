@@ -47,6 +47,7 @@ async def prediction(req_body: Item = Body(...)):
         # image = stringToRGB(req_body.encoded_img)
     
         # result = predict(image)
+        logger.debug(INTERPRETER.get_signature_list())
         result = predict(req_body.encoded_img, INTERPRETER)
         
         if result:
