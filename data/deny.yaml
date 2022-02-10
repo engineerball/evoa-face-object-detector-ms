@@ -1,0 +1,31 @@
+accessories:
+  - piercing
+  - jewellery
+  - necklace
+  - earrings
+  - scarf
+---
+headwear:
+  - sombero
+  - bandana
+  - hat
+  - cap
+  - beanie
+---
+eyewear:
+  - eyewear
+  - glasses
+  - goggles
+  - eyeglasses
+  - sunglasses
+---
+object:
+  - cartoon
+  # - flash photography
+  - darkness
+  - art
+---
+expression:
+  - smile
+  - happy
+  - facial expression

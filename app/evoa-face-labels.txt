@@ -1,0 +1,5 @@
+eyeglasses
+headwear
+necklace
+earrings
+head

@@ -1,0 +1,28 @@
+image:
+  file: .gitpod.Dockerfile
+
+ports:
+    - port: 5000
+      onOpen: open-preview
+
+tasks:
+  - before: |
+      export ENV=development
+      init: |
+        pip install -r requirements-dev.txt
+      command: |
+        uvicorn app.main:app --host 0.0.0.0 --port 5000
+
+
+vscode:
+  extensions:
+    - ms-python.python
+    
+# github:
+#     prebuilds:
+#         # enable for the master/default branch (defaults to true)
+#         master: true
+#         # enable for pull requests coming from this repo (defaults to true)
+#         pullRequests: false
+#         # add a "Review in Gitpod" button as a comment to pull requests (defaults to true)
+#         addComment: false
