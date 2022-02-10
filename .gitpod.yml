@@ -1,22 +1,26 @@
-# image:
-#   file: .gitpod.Dockerfile
+tasks:
+  - init: pip install -r requirements-dev.txt # runs during prebuild
+    command: uvicorn app.main:app --host 0.0.0.0 --port 5000
+
 
 ports:
     - port: 5000
       onOpen: open-preview
 
-tasks:
-  - before: |
-      export ENV=development
-      init: |
-        pip install -r requirements-dev.txt
-      command: |
-        uvicorn app.main:app --host 0.0.0.0 --port 5000
+# tasks:
+#   - before: |
+#       export ENV=development
+#       init: |
+#         pip install -r requirements-dev.txt
+#       command: |
+#         uvicorn app.main:app --host 0.0.0.0 --port 5000
 
 
 vscode:
   extensions:
     - ms-python.python
+    - entepe85.gitlens  
+    - esbenp.prettier-vscode
     
 # github:
 #     prebuilds:
