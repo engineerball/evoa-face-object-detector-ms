@@ -4,7 +4,8 @@ stages:
   # - deploy-alpha
 
 test:
-  image: engineerball/python37-opencv453:1.0.0 # or another arbitrary docker image
+  # image: engineerball/python37-opencv453:1.0.0 # or another arbitrary docker image
+  image: tiangolo/uvicorn-gunicorn-fastapi:python3.8
   stage: test
   script:
     # - apk add python3-dev gcc g++ libffi-dev openssl-dev make
