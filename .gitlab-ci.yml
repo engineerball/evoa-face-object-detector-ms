@@ -9,7 +9,7 @@ test:
   stage: test
   script:
     # - apk add python3-dev gcc g++ libffi-dev openssl-dev make
-    - pip install -r requirements-dev.txt
+    - pip install --use-deprecated=legacy-resolver -r requirements-dev.txt
     - nosetests --with-coverage --cover-erase --cover-package=./ --cover-html tests
     - coverage report
   artifacts:
